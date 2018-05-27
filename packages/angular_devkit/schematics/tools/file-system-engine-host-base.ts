@@ -221,6 +221,7 @@ export abstract class FileSystemEngineHostBase implements
 
     const { path } = resolvedRef;
     let schema = partialDesc.schema;
+    
     let schemaJson: JsonObject | undefined = undefined;
     if (schema) {
       if (!isAbsolute(schema)) {

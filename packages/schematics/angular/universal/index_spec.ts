@@ -17,11 +17,11 @@ describe('Universal Schematic', () => {
     path.join(__dirname, '../collection.json'),
   );
   const defaultOptions: UniversalOptions = {
-    clientProject: 'bar',
+    project: 'bar',
   };
-  const workspaceUniversalOptions: UniversalOptions = {
-    clientProject: 'workspace',
-  };
+
+
+
 
   const workspaceOptions: WorkspaceOptions = {
     name: 'workspace',
@@ -73,7 +73,7 @@ describe('Universal Schematic', () => {
   });
 
   it('should create a tsconfig file for the workspace project', () => {
-    const tree = schematicRunner.runSchematic('universal', workspaceUniversalOptions, appTree);
+    const tree = schematicRunner.runSchematic('universal', workspaceOptions, appTree);
     const filePath = '/src/tsconfig.server.json';
     expect(tree.exists(filePath)).toEqual(true);
     const contents = tree.readContent(filePath);
@@ -94,7 +94,7 @@ describe('Universal Schematic', () => {
   });
 
   it('should create a tsconfig file for a generated application', () => {
-    const tree = schematicRunner.runSchematic('universal', defaultOptions, appTree);
+    const tree = schematicRunner.runSchematic('universal', workspaceOptions, appTree);
     const filePath = '/projects/bar/tsconfig.server.json';
     expect(tree.exists(filePath)).toEqual(true);
     const contents = tree.readContent(filePath);

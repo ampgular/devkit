@@ -48,10 +48,10 @@ function getClientProject(
   host: Tree, options: UniversalOptions,
 ): experimental.workspace.WorkspaceProject {
   const workspace = getWorkspace(host);
-  const clientProject = workspace.projects[options.clientProject];
-  if (!clientProject) {
-    throw new SchematicsException(`Client app ${options.clientProject} not found.`);
+  if (!options.project) {
+    throw new SchematicsException('Option (project) is required.');
   }
+  const clientProject = workspace.projects[options.project];
 
   return clientProject;
 }
@@ -72,17 +72,16 @@ function getClientArchitect(
 function updateConfigFile(options: UniversalOptions, tsConfigDirectory: Path): Rule {
   return (host: Tree) => {
     const workspace = getWorkspace(host);
-    if (!workspace.projects[options.clientProject]) {
-      throw new SchematicsException(`Client app ${options.clientProject} not found.`);
+    if (!options.project) {
+      throw new SchematicsException('Option (project) is required.');
     }
-
-    const clientProject = workspace.projects[options.clientProject];
+    const clientProject = workspace.projects[options.project];
     if (!clientProject.architect) {
       throw new Error('Client project architect not found.');
     }
 
     const builderOptions: JsonObject = {
-      outputPath: `dist/${options.clientProject}-server`,
+      outputPath: `dist/${options.project}-server`,
       main: `${clientProject.root}src/main.server.ts`,
       tsConfig: join(tsConfigDirectory, `${options.tsconfigFileName}.json`),
     };
@@ -210,9 +209,6 @@ function getTsConfigOutDir(host: Tree, architect: experimental.workspace.Workspa
 export default function (options: UniversalOptions): Rule {
   return (host: Tree, context: SchematicContext) => {
     const clientProject = getClientProject(host, options);
-    if (clientProject.projectType !== 'application') {
-      throw new SchematicsException(`Universal requires a project type of "application".`);
-    }
     const clientArchitect = getClientArchitect(host, options);
     const outDir = getTsConfigOutDir(host, clientArchitect);
     const tsConfigExtends = basename(clientArchitect.build.options.tsConfig);

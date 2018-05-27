@@ -5,7 +5,9 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { JsonObject, normalize } from '@angular-devkit/core';
+import { JsonObject, 
+  experimental,
+  normalize } from '@angular-devkit/core';
 import {
   Rule,
   SchematicContext,
@@ -34,6 +36,8 @@ import { InsertChange } from '../utility/change';
 import { getWorkspace, getWorkspacePath } from '../utility/config';
 import { getAppModulePath } from '../utility/ng-ast-utils';
 import { Schema as AppShellOptions } from './schema';
+
+
 
 
 // Helper functions. (possible refactors to utils)
@@ -171,11 +175,11 @@ function addUniversalTarget(options: AppShellOptions): Rule {
     // Copy options.
     const universalOptions = {
       ...options,
-      name: options.universalProject,
+      name: options.project,
     };
 
     // Delete non-universal options.
-    delete universalOptions.universalProject;
+    delete universalOptions.project;
     delete universalOptions.route;
 
     return schematic('universal', universalOptions)(host, context);
@@ -194,19 +198,19 @@ function addAppShellConfigToWorkspace(options: AppShellOptions): Rule {
     const appShellTarget: JsonObject = {
       builder: '@angular-devkit/build-angular:app-shell',
       options: {
-        browserTarget: `${options.clientProject}:build`,
-        serverTarget: `${options.clientProject}:server`,
+        browserTarget: `${options.project}:build`,
+        serverTarget: `${options.project}:server`,
         route: options.route,
       },
     };
 
-    if (!workspace.projects[options.clientProject]) {
-      throw new SchematicsException(`Client app ${options.clientProject} not found.`);
-    }
-    const clientProject = workspace.projects[options.clientProject];
+    const clientProject = getClientProject(host, options);
+
     if (!clientProject.architect) {
       throw new Error('Client project architect not found.');
     }
+
+
     clientProject.architect['app-shell'] = appShellTarget;
 
     host.overwrite(workspacePath, JSON.stringify(workspace, null, 2));
@@ -315,19 +319,19 @@ function addShellComponent(options: AppShellOptions): Rule {
     const componentOptions: ComponentOptions = {
       name: 'app-shell',
       module: options.rootModuleFileName,
-      project: options.clientProject,
+      project: options.project,
     };
 
     return schematic('component', componentOptions)(host, context);
   };
 }
 
-function getClientProject(host: Tree, options: AppShellOptions): WorkspaceProject {
+function getClientProject(host: Tree, options: AppShellOptions): experimental.workspace.WorkspaceProject {
   const workspace = getWorkspace(host);
-  const clientProject = workspace.projects[options.clientProject];
-  if (!clientProject) {
-    throw new SchematicsException(formatMissingAppMsg('Client', options.clientProject));
+  if (!options.project) {
+    throw new SchematicsException('Option (project) is required.');
   }
+  const clientProject = workspace.projects[options.project];
 
   return clientProject;
 }

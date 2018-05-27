@@ -18,9 +18,7 @@ describe('App Shell Schematic', () => {
     path.join(__dirname, '../collection.json'),
   );
   const defaultOptions: AppShellOptions = {
-    name: 'foo',
-    clientProject: 'bar',
-    universalProject: 'universal',
+     project: 'bar',
   };
 
   const workspaceOptions: WorkspaceOptions = {

@@ -10,19 +10,11 @@ export interface Schema {
     /**
      * Name of related client app.
      */
-    clientProject: string;
-    /**
-     * Name of related universal app.
-     */
-    universalProject: string;
+    project?: string;
     /**
      * Route path used to produce the app shell.
      */
     route?: string;
-    /**
-     * Name of the universal app
-     */
-    name?: string;
     /**
      * The appId to use withServerTransition.
      */

@@ -4,26 +4,17 @@
   "title": "Angular AppShell Options Schema",
   "type": "object",
   "properties": {
-    "clientProject": {
+    "project": {
       "type": "string",
-      "description": "Name of related client app."
-    },
-    "universalProject": {
-      "type": "string",
-      "description": "Name of related universal app."
+      "description": "Name of related client app.",
+      "$default": {
+        "$source": "projectName"
+      }
     },
     "route": {
       "type": "string",
       "description": "Route path used to produce the app shell.",
       "default": "shell"
-    },
-
-
-
-    "name": {
-      "type": "string",
-      "format": "html-selector",
-      "description": "Name of the universal app"
     },
     "appId": {
       "type": "string",
@@ -99,7 +90,5 @@
     }
   },
   "required": [
-    "clientProject",
-    "universalProject"
   ]
 }
